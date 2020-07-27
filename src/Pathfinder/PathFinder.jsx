@@ -1,14 +1,10 @@
 import React, { Component } from "react";
 
-import { bfs } from "../algorithms/bfs";
-import { dfs } from "../algorithms/dfs";
-import { rebuildShortestPathFromFinishNode } from "../algorithms/common";
+import { bfs } from "../pathfinding-algorithms/bfs";
+import { dfs } from "../pathfinding-algorithms/dfs";
+import { rebuildShortestPathFromFinishNode } from "../pathfinding-algorithms/common";
 
 import "./Pathfinder.css";
-
-const Node = ({ row, col, type }) => {
-  return <div id={`node-${row}-${col}`} className={`node ${type}`}></div>;
-};
 
 export default class Pathfinder extends Component {
   constructor(props) {
@@ -25,20 +21,20 @@ export default class Pathfinder extends Component {
 
   visualizeBfs() {
     const { grid, startNode, finishNode } = this.initPathfinding();
+
     const visitedNodesInOrder = bfs(grid, startNode, finishNode);
-    const nodesInShortestPathOrder = rebuildShortestPathFromFinishNode(
-      finishNode
-    );
-    this.animateSearch(visitedNodesInOrder, nodesInShortestPathOrder);
+    const shortestPathInOrder = rebuildShortestPathFromFinishNode(finishNode);
+
+    this.animateSearch(visitedNodesInOrder, shortestPathInOrder);
   }
 
   visualizeDfs() {
     const { grid, startNode, finishNode } = this.initPathfinding();
+
     const visitedNodesInOrder = dfs(grid, startNode, finishNode);
-    const nodesInShortestPathOrder = rebuildShortestPathFromFinishNode(
-      finishNode
-    );
-    this.animateSearch(visitedNodesInOrder, nodesInShortestPathOrder);
+    const shortestPathInOrder = rebuildShortestPathFromFinishNode(finishNode);
+
+    this.animateSearch(visitedNodesInOrder, shortestPathInOrder);
   }
 
   initPathfinding() {
@@ -50,30 +46,25 @@ export default class Pathfinder extends Component {
     return { grid, startNode, finishNode };
   }
 
-  animateSearch(visitedNodesInOrder, nodesInShortestPathOrder) {
-    for (let i = 0; i <= visitedNodesInOrder.length; i++) {
-      if (i === visitedNodesInOrder.length) {
-        setTimeout(() => {
-          this.animateShortestPath(nodesInShortestPathOrder);
-        }, 10 * i);
-        return;
-      } else {
-        setTimeout(() => {
-          const node = visitedNodesInOrder[i];
-          document.getElementById(`node-${node.row}-${node.col}`).className =
-            "node node-visited";
-        }, 10 * i);
-      }
+  animateSearch(visitedNodesInOrder, shortestPathInOrder) {
+    for (let [index, node] of visitedNodesInOrder.entries()) {
+      setTimeout(
+        addCssClassToNode.bind(null, node, "node-visited"),
+        10 * index
+      );
     }
+
+    setTimeout(() => {
+      this.animateShortestPath(shortestPathInOrder);
+    }, 10 * visitedNodesInOrder.length);
   }
 
-  animateShortestPath(nodesInShortestPathOrder) {
-    for (let i = 0; i < nodesInShortestPathOrder.length; i++) {
-      setTimeout(() => {
-        const node = nodesInShortestPathOrder[i];
-        document.getElementById(`node-${node.row}-${node.col}`).className =
-          "node node-shortest-path";
-      }, 50 * i);
+  animateShortestPath(shortestPathInOrder) {
+    for (let [index, node] of shortestPathInOrder.entries()) {
+      setTimeout(
+        addCssClassToNode.bind(null, node, "node-shortest-path"),
+        25 * index
+      );
     }
   }
 
@@ -82,20 +73,8 @@ export default class Pathfinder extends Component {
 
     return (
       <div className="pathfinder-main">
-        <button
-          className="start-visualizing-button"
-          onClick={() => this.visualizeBfs()}
-        >
-          Visualize BFS
-        </button>
-
-        <button
-          className="start-visualizing-button"
-          onClick={() => this.visualizeDfs()}
-        >
-          Visualize DFS
-        </button>
-
+        <button onClick={() => this.visualizeBfs()}>Visualize BFS</button>
+        <button onClick={() => this.visualizeDfs()}>Visualize DFS</button>
         <div className="grid">
           {grid.map((row, rowIdx) => {
             return (
@@ -161,4 +140,13 @@ const createNode = (
     isVisited: false,
     previousNode: null,
   };
+};
+
+const addCssClassToNode = (node, cssClass) => {
+  const nodeElement = document.getElementById(`node-${node.row}-${node.col}`);
+  nodeElement.className = `node ${cssClass}`;
+};
+
+const Node = ({ row, col, type }) => {
+  return <div id={`node-${row}-${col}`} className={`node ${type}`}></div>;
 };

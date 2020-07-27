@@ -4,8 +4,9 @@
   text-align: center;
 }
 
-.start-visualizing-button {
-  margin: auto;
+.grid {
+  width: 100%;
+  margin-top: 2em;
 }
 
 .node {

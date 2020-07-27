@@ -6,7 +6,7 @@ function App() {
   return (
     <div className="App">
       <Pathfinder
-        rows={20}
+        rows={25}
         cols={50}
         startRow={10}
         startColumn={15}
