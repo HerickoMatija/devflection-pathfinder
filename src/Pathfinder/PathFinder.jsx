@@ -11,6 +11,8 @@ export default class Pathfinder extends Component {
     super(props);
     this.state = {
       grid: [],
+      animating: false,
+      done: false,
     };
   }
 
@@ -19,7 +21,30 @@ export default class Pathfinder extends Component {
     this.setState({ grid });
   }
 
+  resetBoard() {
+    if (this.state.animating) {
+      return;
+    }
+
+    Promise.resolve().then(() => {
+      this.setState({ grid: [], animating: false, done: false });
+    });
+
+    const grid = getInitialGrid(this.props);
+
+    Promise.resolve().then(() => {
+      this.setState({ grid: grid });
+    });
+  }
+
   visualizeBfs() {
+    if (!this.canClick()) {
+      return;
+    }
+    Promise.resolve().then(() => {
+      this.setState({ animating: true });
+    });
+
     const { grid, startNode, finishNode } = this.initPathfinding();
 
     const visitedNodesInOrder = bfs(grid, startNode, finishNode);
@@ -29,12 +54,23 @@ export default class Pathfinder extends Component {
   }
 
   visualizeDfs() {
+    if (!this.canClick()) {
+      return;
+    }
+    Promise.resolve().then(() => {
+      this.setState({ animating: true });
+    });
+
     const { grid, startNode, finishNode } = this.initPathfinding();
 
     const visitedNodesInOrder = dfs(grid, startNode, finishNode);
     const shortestPathInOrder = rebuildShortestPathFromFinishNode(finishNode);
 
     this.animateSearch(visitedNodesInOrder, shortestPathInOrder);
+  }
+
+  canClick() {
+    return !this.state.animating && !this.state.done;
   }
 
   initPathfinding() {
@@ -57,6 +93,10 @@ export default class Pathfinder extends Component {
     setTimeout(() => {
       this.animateShortestPath(shortestPathInOrder);
     }, 10 * visitedNodesInOrder.length);
+
+    setTimeout(() => {
+      this.setState({ animating: false, done: true });
+    }, 10 * visitedNodesInOrder.length + 1300);
   }
 
   animateShortestPath(shortestPathInOrder) {
@@ -75,6 +115,7 @@ export default class Pathfinder extends Component {
       <div className="pathfinder-main">
         <button onClick={() => this.visualizeBfs()}>Visualize BFS</button>
         <button onClick={() => this.visualizeDfs()}>Visualize DFS</button>
+        <button onClick={() => this.resetBoard()}>Reset board</button>
         <div className="grid">
           {grid.map((row, rowIdx) => {
             return (
