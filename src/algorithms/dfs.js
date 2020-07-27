@@ -1,13 +1,13 @@
 import { getUnvisitedNeighbors } from "./common";
 
-export function bfs(grid, startNode, finishNode) {
+export function dfs(grid, startNode, finishNode) {
   const visitedNodesInOrder = [];
 
   const queue = [];
   queue.push(startNode);
 
   while (queue) {
-    let current = queue.shift();
+    let current = queue.pop();
     visitedNodesInOrder.push(current);
     current.isVisited = true;
 

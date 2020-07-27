@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 
-import { bfs, getNodesInShortestPathOrder } from "../algorithms/bfs";
+import { bfs } from "../algorithms/bfs";
+import { dfs } from "../algorithms/dfs";
+import { rebuildShortestPathFromFinishNode } from "../algorithms/common";
 
 import "./Pathfinder.css";
 
@@ -21,7 +23,34 @@ export default class Pathfinder extends Component {
     this.setState({ grid });
   }
 
-  animateBfs(visitedNodesInOrder, nodesInShortestPathOrder) {
+  visualizeBfs() {
+    const { grid, startNode, finishNode } = this.initPathfinding();
+    const visitedNodesInOrder = bfs(grid, startNode, finishNode);
+    const nodesInShortestPathOrder = rebuildShortestPathFromFinishNode(
+      finishNode
+    );
+    this.animateSearch(visitedNodesInOrder, nodesInShortestPathOrder);
+  }
+
+  visualizeDfs() {
+    const { grid, startNode, finishNode } = this.initPathfinding();
+    const visitedNodesInOrder = dfs(grid, startNode, finishNode);
+    const nodesInShortestPathOrder = rebuildShortestPathFromFinishNode(
+      finishNode
+    );
+    this.animateSearch(visitedNodesInOrder, nodesInShortestPathOrder);
+  }
+
+  initPathfinding() {
+    const { startRow, startColumn, finishRow, finishColumn } = this.props;
+    const { grid } = this.state;
+    const startNode = grid[startRow][startColumn];
+    const finishNode = grid[finishRow][finishColumn];
+
+    return { grid, startNode, finishNode };
+  }
+
+  animateSearch(visitedNodesInOrder, nodesInShortestPathOrder) {
     for (let i = 0; i <= visitedNodesInOrder.length; i++) {
       if (i === visitedNodesInOrder.length) {
         setTimeout(() => {
@@ -48,16 +77,6 @@ export default class Pathfinder extends Component {
     }
   }
 
-  visualizeBfs() {
-    const { startRow, startColumn, finishRow, finishColumn } = this.props;
-    const { grid } = this.state;
-    const startNode = grid[startRow][startColumn];
-    const finishNode = grid[finishRow][finishColumn];
-    const visitedNodesInOrder = bfs(grid, startNode, finishNode);
-    const nodesInShortestPathOrder = getNodesInShortestPathOrder(finishNode);
-    this.animateBfs(visitedNodesInOrder, nodesInShortestPathOrder);
-  }
-
   render() {
     const { grid } = this.state;
 
@@ -67,7 +86,14 @@ export default class Pathfinder extends Component {
           className="start-visualizing-button"
           onClick={() => this.visualizeBfs()}
         >
-          Visualize bfs
+          Visualize BFS
+        </button>
+
+        <button
+          className="start-visualizing-button"
+          onClick={() => this.visualizeDfs()}
+        >
+          Visualize DFS
         </button>
 
         <div className="grid">
