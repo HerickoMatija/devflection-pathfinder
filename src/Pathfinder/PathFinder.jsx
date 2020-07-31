@@ -38,7 +38,7 @@ export default class Pathfinder extends Component {
       this.setState({ animating: true });
     });
 
-    const { grid, startNode, finishNode } = this.initPathfinding();
+    const { grid, startNode, finishNode } = this.state;
 
     const visitedNodesInOrder = bfs(grid, startNode, finishNode);
     const shortestPathInOrder = rebuildShortestPathFromFinishNode(finishNode);
@@ -51,20 +51,12 @@ export default class Pathfinder extends Component {
       this.setState({ animating: true });
     });
 
-    const { grid, startNode, finishNode } = this.initPathfinding();
+    const { grid, startNode, finishNode } = this.state;
 
     const visitedNodesInOrder = dfs(grid, startNode, finishNode);
     const shortestPathInOrder = rebuildShortestPathFromFinishNode(finishNode);
 
     this.animateSearch(visitedNodesInOrder, shortestPathInOrder);
-  }
-
-  initPathfinding() {
-    const { grid } = this.state;
-    const startNode = document.getElementsByClassName("node-start");
-    const finishNode = document.getElementsByClassName("node-finish");
-
-    return { grid, startNode, finishNode };
   }
 
   animateSearch(visitedNodesInOrder, shortestPathInOrder) {
@@ -137,6 +129,7 @@ export default class Pathfinder extends Component {
                         col={col}
                         type={type}
                         row={row}
+                        toggleCellCallback={() => this.toggleCell(row, col)}
                       ></Node>
                     );
                   })}
@@ -147,6 +140,26 @@ export default class Pathfinder extends Component {
         </div>
       </>
     );
+  }
+
+  toggleCell(row, col) {
+    const node = this.state.grid[row][col];
+    const startNode = this.state.startNode;
+    const finishNode = this.state.finishNode;
+
+    node.type = "node-start";
+
+    if (startNode != null) {
+      startNode.type = "node-finish";
+    }
+    if (finishNode != null) {
+      finishNode.type = "";
+    }
+
+    this.setState({
+      startNode: node,
+      finishNode: startNode,
+    });
   }
 }
 
@@ -184,6 +197,12 @@ const addCssClassToNode = (node, cssClass) => {
   nodeElement.className = `node ${cssClass}`;
 };
 
-const Node = ({ row, col, type }) => {
-  return <div id={`node-${row}-${col}`} className={`node ${type}`}></div>;
+const Node = ({ row, col, type, toggleCellCallback }) => {
+  return (
+    <div
+      id={`node-${row}-${col}`}
+      className={`node ${type}`}
+      onClick={toggleCellCallback}
+    ></div>
+  );
 };
