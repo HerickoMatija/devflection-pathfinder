@@ -5,11 +5,11 @@ export function bfs(grid, startNode, finishNode) {
 
   const queue = [];
   queue.push(startNode);
+  startNode.isVisited = true;
 
   while (queue) {
     let current = queue.shift();
     visitedNodesInOrder.push(current);
-    current.isVisited = true;
 
     if (current === finishNode) {
       return visitedNodesInOrder;

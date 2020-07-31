@@ -19,7 +19,6 @@ export function dfs(grid, startNode, finishNode) {
 
     for (let unvisitedNeighbor of unvisitedNeighbors) {
       queue.push(unvisitedNeighbor);
-      unvisitedNeighbor.isVisited = true;
       unvisitedNeighbor.previousNode = current;
     }
   }
