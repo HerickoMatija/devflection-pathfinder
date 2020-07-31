@@ -22,10 +22,6 @@ export default class Pathfinder extends Component {
   }
 
   resetBoard() {
-    if (this.state.animating) {
-      return;
-    }
-
     Promise.resolve().then(() => {
       this.setState({ grid: [], animating: false, done: false });
     });
@@ -38,9 +34,6 @@ export default class Pathfinder extends Component {
   }
 
   visualizeBfs() {
-    if (!this.canClick()) {
-      return;
-    }
     Promise.resolve().then(() => {
       this.setState({ animating: true });
     });
@@ -54,9 +47,6 @@ export default class Pathfinder extends Component {
   }
 
   visualizeDfs() {
-    if (!this.canClick()) {
-      return;
-    }
     Promise.resolve().then(() => {
       this.setState({ animating: true });
     });
@@ -67,10 +57,6 @@ export default class Pathfinder extends Component {
     const shortestPathInOrder = rebuildShortestPathFromFinishNode(finishNode);
 
     this.animateSearch(visitedNodesInOrder, shortestPathInOrder);
-  }
-
-  canClick() {
-    return !this.state.animating && !this.state.done;
   }
 
   initPathfinding() {
@@ -112,25 +98,55 @@ export default class Pathfinder extends Component {
     const { grid } = this.state;
 
     return (
-      <div className="pathfinder-main">
-        <button onClick={() => this.visualizeBfs()}>Visualize BFS</button>
-        <button onClick={() => this.visualizeDfs()}>Visualize DFS</button>
-        <button onClick={() => this.resetBoard()}>Reset board</button>
-        <div className="grid">
-          {grid.map((row, rowIdx) => {
-            return (
-              <div key={rowIdx}>
-                {row.map((node, nodeIdx) => {
-                  const { row, col, type } = node;
-                  return (
-                    <Node key={nodeIdx} col={col} type={type} row={row}></Node>
-                  );
-                })}
-              </div>
-            );
-          })}
+      <>
+        <div class="menu-container">
+          <div class="menu">
+            <button
+              class="menu-button"
+              disabled={this.state.animating || this.state.done}
+              onClick={() => this.visualizeBfs()}
+            >
+              Visualize BFS
+            </button>
+            <button
+              class="menu-button"
+              disabled={this.state.animating || this.state.done}
+              onClick={() => this.visualizeDfs()}
+            >
+              Visualize DFS
+            </button>
+            <button
+              class="menu-button"
+              disabled={this.state.animating}
+              onClick={() => this.resetBoard()}
+            >
+              Reset board
+            </button>
+          </div>
         </div>
-      </div>
+
+        <div className="pathfinder-main">
+          <div className="grid">
+            {grid.map((row, rowIdx) => {
+              return (
+                <div key={rowIdx}>
+                  {row.map((node, nodeIdx) => {
+                    const { row, col, type } = node;
+                    return (
+                      <Node
+                        key={nodeIdx}
+                        col={col}
+                        type={type}
+                        row={row}
+                      ></Node>
+                    );
+                  })}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </>
     );
   }
 }
