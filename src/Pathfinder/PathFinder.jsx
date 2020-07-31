@@ -17,7 +17,11 @@ export default class Pathfinder extends Component {
   }
 
   componentDidMount() {
-    const grid = getInitialGrid(this.props);
+    const grid = getInitialGrid(
+      this.props,
+      window.innerWidth,
+      window.innerHeight
+    );
     this.setState({ grid });
   }
 
@@ -26,7 +30,11 @@ export default class Pathfinder extends Component {
       this.setState({ grid: [], animating: false, done: false });
     });
 
-    const grid = getInitialGrid(this.props);
+    const grid = getInitialGrid(
+      this.props,
+      window.innerWidth,
+      window.innerHeight
+    );
 
     Promise.resolve().then(() => {
       this.setState({ grid: grid });
@@ -99,24 +107,24 @@ export default class Pathfinder extends Component {
 
     return (
       <>
-        <div class="menu-container">
-          <div class="menu">
+        <div className="menu-container">
+          <div className="menu">
             <button
-              class="menu-button"
+              className="menu-button"
               disabled={this.state.animating || this.state.done}
               onClick={() => this.visualizeBfs()}
             >
               Visualize BFS
             </button>
             <button
-              class="menu-button"
+              className="menu-button"
               disabled={this.state.animating || this.state.done}
               onClick={() => this.visualizeDfs()}
             >
               Visualize DFS
             </button>
             <button
-              class="menu-button"
+              className="menu-button"
               disabled={this.state.animating}
               onClick={() => this.resetBoard()}
             >
@@ -151,18 +159,22 @@ export default class Pathfinder extends Component {
   }
 }
 
-const getInitialGrid = ({
-  rows,
-  cols,
-  startRow,
-  startColumn,
-  finishRow,
-  finishColumn,
-}) => {
+const getInitialGrid = (
+  { startRow, startColumn, finishRow, finishColumn },
+  width,
+  height
+) => {
+  const availableWidth = Math.floor(width * 0.8) - 50;
+  const availableHeight = Math.floor(height * 0.8) - 50;
+
+  const possibleRows = Math.floor(availableHeight / 25);
+  const possibleCols = Math.floor(availableWidth / 25);
+
   const grid = [];
-  for (let row = 0; row < rows; row++) {
+
+  for (let row = 0; row < possibleRows; row++) {
     const currentRow = [];
-    for (let col = 0; col < cols; col++) {
+    for (let col = 0; col < possibleCols; col++) {
       currentRow.push(
         createNode(col, row, startRow, startColumn, finishRow, finishColumn)
       );
