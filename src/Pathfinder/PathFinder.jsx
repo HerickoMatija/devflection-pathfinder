@@ -17,11 +17,7 @@ export default class Pathfinder extends Component {
   }
 
   componentDidMount() {
-    const grid = getInitialGrid(
-      this.props,
-      window.innerWidth,
-      window.innerHeight
-    );
+    const grid = getInitialGrid(window.innerWidth, window.innerHeight);
     this.setState({ grid });
   }
 
@@ -30,11 +26,7 @@ export default class Pathfinder extends Component {
       this.setState({ grid: [], animating: false, done: false });
     });
 
-    const grid = getInitialGrid(
-      this.props,
-      window.innerWidth,
-      window.innerHeight
-    );
+    const grid = getInitialGrid(window.innerWidth, window.innerHeight);
 
     Promise.resolve().then(() => {
       this.setState({ grid: grid });
@@ -68,10 +60,9 @@ export default class Pathfinder extends Component {
   }
 
   initPathfinding() {
-    const { startRow, startColumn, finishRow, finishColumn } = this.props;
     const { grid } = this.state;
-    const startNode = grid[startRow][startColumn];
-    const finishNode = grid[finishRow][finishColumn];
+    const startNode = document.getElementsByClassName("node-start");
+    const finishNode = document.getElementsByClassName("node-finish");
 
     return { grid, startNode, finishNode };
   }
@@ -159,11 +150,7 @@ export default class Pathfinder extends Component {
   }
 }
 
-const getInitialGrid = (
-  { startRow, startColumn, finishRow, finishColumn },
-  width,
-  height
-) => {
+const getInitialGrid = (width, height) => {
   const availableWidth = Math.floor(width * 0.8) - 50;
   const availableHeight = Math.floor(height * 0.8) - 50;
 
@@ -175,37 +162,18 @@ const getInitialGrid = (
   for (let row = 0; row < possibleRows; row++) {
     const currentRow = [];
     for (let col = 0; col < possibleCols; col++) {
-      currentRow.push(
-        createNode(col, row, startRow, startColumn, finishRow, finishColumn)
-      );
+      currentRow.push(createNode(col, row));
     }
     grid.push(currentRow);
   }
   return grid;
 };
 
-const createNode = (
-  col,
-  row,
-  startRow,
-  startColumn,
-  finishRow,
-  finishColumn
-) => {
-  let type = "node";
-
-  if (row === startRow && col === startColumn) {
-    type = "node-start";
-  }
-
-  if (row === finishRow && col === finishColumn) {
-    type = "node-finish";
-  }
-
+const createNode = (col, row) => {
   return {
     col,
     row,
-    type: type,
+    type: "node",
     isVisited: false,
     previousNode: null,
   };
