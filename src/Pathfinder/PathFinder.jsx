@@ -67,13 +67,10 @@ export default class Pathfinder extends Component {
       );
     }
 
-    setTimeout(() => {
-      this.animateShortestPath(shortestPathInOrder);
-    }, 10 * visitedNodesInOrder.length);
-
-    setTimeout(() => {
-      this.setState({ animating: false, done: true });
-    }, 10 * visitedNodesInOrder.length + 1300);
+    setTimeout(
+      () => this.animateShortestPath(shortestPathInOrder),
+      10 * visitedNodesInOrder.length
+    );
   }
 
   animateShortestPath(shortestPathInOrder) {
@@ -83,6 +80,10 @@ export default class Pathfinder extends Component {
         25 * index
       );
     }
+
+    setTimeout(() => {
+      this.setState({ animating: false, done: true });
+    }, 25 * shortestPathInOrder.length);
   }
 
   render() {
