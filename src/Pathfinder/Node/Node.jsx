@@ -4,7 +4,16 @@ import "./Node.css";
 
 export default class Node extends Component {
   render() {
-    const { row, col, isStart, isFinish, toggleCellCallback } = this.props;
+    const {
+      row,
+      col,
+      isStart,
+      isFinish,
+      onMouseDown,
+      onMouseUp,
+      onMouseEnter,
+      onMouseLeave,
+    } = this.props;
 
     let classes = "node";
 
@@ -19,7 +28,10 @@ export default class Node extends Component {
       <div
         id={`node-${row}-${col}`}
         className={classes}
-        onClick={toggleCellCallback}
+        onMouseDown={() => onMouseDown(row, col)}
+        onMouseUp={() => onMouseUp()}
+        onMouseEnter={() => onMouseEnter(row, col)}
+        onMouseLeave={() => onMouseLeave(row, col)}
       ></div>
     );
   }
