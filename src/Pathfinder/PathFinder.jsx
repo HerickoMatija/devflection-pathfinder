@@ -12,19 +12,27 @@ import "./Pathfinder.css";
 const BFS = "bfs";
 const DFS = "dfs";
 
+const START_NODE_ROW = 5;
+const START_NODE_COL = 5;
+const FINISH_NODE_ROW = 10;
+const FINISH_NODE_COL = 10;
+
 export default class Pathfinder extends Component {
   constructor(props) {
     super(props);
     this.state = {
       grid: [],
-      animating: false,
-      done: false,
+      startNode: null,
+      finishNode: null,
     };
   }
 
   componentDidMount() {
     const grid = getInitialGrid(window.innerWidth, window.innerHeight);
-    this.setState({ grid });
+    const startNode = grid[START_NODE_ROW][START_NODE_COL];
+    const finishNode = grid[FINISH_NODE_ROW][FINISH_NODE_COL];
+
+    this.setState({ grid, startNode, finishNode });
   }
 
   resetBoard() {
@@ -33,9 +41,11 @@ export default class Pathfinder extends Component {
     });
 
     const grid = getInitialGrid(window.innerWidth, window.innerHeight);
+    const startNode = grid[START_NODE_ROW][START_NODE_COL];
+    const finishNode = grid[FINISH_NODE_ROW][FINISH_NODE_COL];
 
     Promise.resolve().then(() => {
-      this.setState({ grid: grid });
+      this.setState({ grid, startNode, finishNode });
     });
   }
 
@@ -79,14 +89,14 @@ export default class Pathfinder extends Component {
               return (
                 <div key={rowIdx}>
                   {row.map((node, nodeIdx) => {
-                    const { row, col, type } = node;
+                    const { row, col, isStart, isFinish } = node;
                     return (
                       <Node
                         key={nodeIdx}
                         col={col}
-                        type={type}
                         row={row}
-                        toggleCellCallback={() => this.toggleCell(row, col)}
+                        isStart={isStart}
+                        isFinish={isFinish}
                       ></Node>
                     );
                   })}
@@ -97,26 +107,6 @@ export default class Pathfinder extends Component {
         </div>
       </>
     );
-  }
-
-  toggleCell(row, col) {
-    const node = this.state.grid[row][col];
-    const startNode = this.state.startNode;
-    const finishNode = this.state.finishNode;
-
-    node.type = "node-start";
-
-    if (startNode != null) {
-      startNode.type = "node-finish";
-    }
-    if (finishNode != null) {
-      finishNode.type = "";
-    }
-
-    this.setState({
-      startNode: node,
-      finishNode: startNode,
-    });
   }
 }
 
@@ -143,7 +133,8 @@ const createNode = (col, row) => {
   return {
     col,
     row,
-    type: "node",
+    isStart: row === START_NODE_ROW && col === START_NODE_COL,
+    isFinish: row === FINISH_NODE_ROW && col === FINISH_NODE_COL,
     isVisited: false,
     previousNode: null,
   };
