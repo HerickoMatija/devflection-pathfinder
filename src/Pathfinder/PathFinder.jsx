@@ -44,6 +44,7 @@ export default class Pathfinder extends Component {
     const startNode = grid[START_NODE_ROW][START_NODE_COL];
     const finishNode = grid[FINISH_NODE_ROW][FINISH_NODE_COL];
 
+    enableButtons();
     Promise.resolve().then(() => {
       this.setState({ grid, startNode, finishNode });
     });
@@ -61,7 +62,12 @@ export default class Pathfinder extends Component {
 
     const shortestPathInOrder = rebuildShortestPathFromFinishNode(finishNode);
 
-    animateSearch(visitedNodesInOrder, shortestPathInOrder);
+    animateSearch(
+      visitedNodesInOrder,
+      shortestPathInOrder,
+      disableButtons,
+      enableResetButton
+    );
   }
 
   render() {
@@ -71,13 +77,25 @@ export default class Pathfinder extends Component {
       <>
         <div className="menu-container">
           <div className="menu">
-            <button className="menu-button" onClick={() => this.visualize(BFS)}>
+            <button
+              id="bfs-btn"
+              className="menu-button"
+              onClick={() => this.visualize(BFS)}
+            >
               Visualize BFS
             </button>
-            <button className="menu-button" onClick={() => this.visualize(DFS)}>
+            <button
+              id="dfs-btn"
+              className="menu-button"
+              onClick={() => this.visualize(DFS)}
+            >
               Visualize DFS
             </button>
-            <button className="menu-button" onClick={() => this.resetBoard()}>
+            <button
+              id="reset-btn"
+              className="menu-button"
+              onClick={() => this.resetBoard()}
+            >
               Reset board
             </button>
           </div>
@@ -138,4 +156,23 @@ const createNode = (col, row) => {
     isVisited: false,
     previousNode: null,
   };
+};
+
+const disableButtons = () => {
+  const buttons = document.getElementsByTagName("button");
+  for (let button of buttons) {
+    button.disabled = true;
+  }
+};
+
+const enableButtons = () => {
+  const buttons = document.getElementsByTagName("button");
+  for (let button of buttons) {
+    button.disabled = false;
+  }
+};
+
+const enableResetButton = () => {
+  const resetButton = document.getElementById("reset-btn");
+  resetButton.disabled = false;
 };

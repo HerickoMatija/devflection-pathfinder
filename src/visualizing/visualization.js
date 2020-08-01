@@ -1,4 +1,11 @@
-export function animateSearch(visitedNodesInOrder, shortestPathInOrder) {
+export function animateSearch(
+  visitedNodesInOrder,
+  shortestPathInOrder,
+  beforeAnimationActions,
+  afterAnimationActions
+) {
+  beforeAnimationActions();
+
   for (let [index, node] of visitedNodesInOrder.entries()) {
     setTimeout(addCssClassToNode, 10 * index, node, "node-visited");
   }
@@ -6,14 +13,16 @@ export function animateSearch(visitedNodesInOrder, shortestPathInOrder) {
   setTimeout(
     animateShortestPath,
     10 * visitedNodesInOrder.length,
-    shortestPathInOrder
+    shortestPathInOrder,
+    afterAnimationActions
   );
 }
 
-function animateShortestPath(shortestPathInOrder) {
+function animateShortestPath(shortestPathInOrder, afterAnimationActions) {
   for (let [index, node] of shortestPathInOrder.entries()) {
     setTimeout(addCssClassToNode, 25 * index, node, "node-shortest-path");
   }
+  setTimeout(afterAnimationActions, 25 * shortestPathInOrder.length);
 }
 
 function addCssClassToNode(node, cssClass) {
