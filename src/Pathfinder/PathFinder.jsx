@@ -6,6 +6,7 @@ import { rebuildShortestPathFromFinishNode } from "../pathfinding-algorithms/com
 import { animateSearch } from "../visualizing/visualization";
 
 import Node from "./Node/Node";
+import MenuBar from "../menu-bar/MenuBar";
 
 import "./Pathfinder.css";
 
@@ -24,6 +25,8 @@ export default class Pathfinder extends Component {
       grid: [],
       startNode: null,
       finishNode: null,
+      visualizationButtonsEnabled: true,
+      resetButtonEnabled: true,
     };
   }
 
@@ -37,20 +40,32 @@ export default class Pathfinder extends Component {
 
   resetBoard() {
     Promise.resolve().then(() => {
-      this.setState({ grid: [] });
+      this.setState({
+        grid: [],
+        startNode: null,
+        finishNode: null,
+        visualizationButtonsEnabled: true,
+        resetButtonEnabled: true,
+      });
     });
 
     const grid = getInitialGrid(window.innerWidth, window.innerHeight);
     const startNode = grid[START_NODE_ROW][START_NODE_COL];
     const finishNode = grid[FINISH_NODE_ROW][FINISH_NODE_COL];
 
-    enableButtons();
     Promise.resolve().then(() => {
       this.setState({ grid, startNode, finishNode });
     });
   }
 
   visualize(selectedAlgorithm) {
+    Promise.resolve().then(() => {
+      this.setState({
+        visualizationButtonsEnabled: false,
+        resetButtonEnabled: false,
+      });
+    });
+
     const { grid, startNode, finishNode } = this.state;
 
     let visitedNodesInOrder;
@@ -62,44 +77,32 @@ export default class Pathfinder extends Component {
 
     const shortestPathInOrder = rebuildShortestPathFromFinishNode(finishNode);
 
+    const afterAnimationAction = () =>
+      this.setState({ resetButtonEnabled: true });
+
     animateSearch(
       visitedNodesInOrder,
       shortestPathInOrder,
-      disableButtons,
-      enableResetButton
+      afterAnimationAction
     );
   }
 
   render() {
-    const { grid } = this.state;
+    const {
+      grid,
+      visualizationButtonsEnabled,
+      resetButtonEnabled,
+    } = this.state;
 
     return (
       <>
-        <div className="menu-container">
-          <div className="menu">
-            <button
-              id="bfs-btn"
-              className="menu-button"
-              onClick={() => this.visualize(BFS)}
-            >
-              Visualize BFS
-            </button>
-            <button
-              id="dfs-btn"
-              className="menu-button"
-              onClick={() => this.visualize(DFS)}
-            >
-              Visualize DFS
-            </button>
-            <button
-              id="reset-btn"
-              className="menu-button"
-              onClick={() => this.resetBoard()}
-            >
-              Reset board
-            </button>
-          </div>
-        </div>
+        <MenuBar
+          bfs={() => this.visualize(BFS)}
+          dfs={() => this.visualize(DFS)}
+          reset={() => this.resetBoard()}
+          visualizationEnabled={visualizationButtonsEnabled}
+          resetEnabled={resetButtonEnabled}
+        ></MenuBar>
 
         <div className="pathfinder-main">
           <div className="grid">
@@ -156,23 +159,4 @@ const createNode = (col, row) => {
     isVisited: false,
     previousNode: null,
   };
-};
-
-const disableButtons = () => {
-  const buttons = document.getElementsByTagName("button");
-  for (let button of buttons) {
-    button.disabled = true;
-  }
-};
-
-const enableButtons = () => {
-  const buttons = document.getElementsByTagName("button");
-  for (let button of buttons) {
-    button.disabled = false;
-  }
-};
-
-const enableResetButton = () => {
-  const resetButton = document.getElementById("reset-btn");
-  resetButton.disabled = false;
 };
