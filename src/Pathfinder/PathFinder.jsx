@@ -2,6 +2,7 @@ import React, { Component } from "react";
 
 import { bfs } from "../pathfinding-algorithms/bfs";
 import { dfs } from "../pathfinding-algorithms/dfs";
+import { dijkstra } from "../pathfinding-algorithms/dijkstra";
 import { rebuildShortestPathFromFinishNode } from "../pathfinding-algorithms/common";
 import { animateSearch } from "../visualizing/visualization";
 
@@ -12,6 +13,7 @@ import "./Pathfinder.css";
 
 const BFS = "bfs";
 const DFS = "dfs";
+const DIJKSTRA = "dijkstra";
 
 const START_NODE_ROW = 5;
 const START_NODE_COL = 5;
@@ -74,6 +76,8 @@ export default class Pathfinder extends Component {
       visitedNodesInOrder = bfs(grid, startNode, finishNode);
     } else if (selectedAlgorithm === DFS) {
       visitedNodesInOrder = dfs(grid, startNode, finishNode);
+    } else if (selectedAlgorithm === DIJKSTRA) {
+      visitedNodesInOrder = dijkstra(grid, startNode, finishNode);
     }
 
     const shortestPathInOrder = rebuildShortestPathFromFinishNode(finishNode);
@@ -139,6 +143,7 @@ export default class Pathfinder extends Component {
         <MenuBar
           bfs={() => this.visualize(BFS)}
           dfs={() => this.visualize(DFS)}
+          dijkstra={() => this.visualize(DIJKSTRA)}
           reset={() => this.resetBoard()}
           buttonsEnabled={buttonsEnabled}
         ></MenuBar>
@@ -203,6 +208,7 @@ const createNode = (col, row) => {
   return {
     col,
     row,
+    distance: Infinity,
     isStart: row === START_NODE_ROW && col === START_NODE_COL,
     isFinish: row === FINISH_NODE_ROW && col === FINISH_NODE_COL,
     isVisited: false,

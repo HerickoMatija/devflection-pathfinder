@@ -4,7 +4,7 @@ import "./MenuBar.css";
 
 export default class MenuBar extends Component {
   render() {
-    const { bfs, dfs, reset, buttonsEnabled } = this.props;
+    const { bfs, dfs, dijkstra, reset, buttonsEnabled } = this.props;
 
     return (
       <div className="menu-container">
@@ -24,6 +24,14 @@ export default class MenuBar extends Component {
             disabled={!buttonsEnabled}
           >
             Visualize DFS
+          </button>
+          <button
+            id="dfs-btn"
+            className="menu-btn"
+            onClick={() => dijkstra()}
+            disabled={!buttonsEnabled}
+          >
+            Visualize Dijkstra's
           </button>
           <button id="reset-btn" className="menu-btn" onClick={() => reset()}>
             Reset board
