@@ -15,19 +15,10 @@ export default class Node extends Component {
       onMouseLeave,
     } = this.props;
 
-    let classes = "node";
-
-    if (isStart) {
-      classes += " node-start";
-    }
-    if (isFinish) {
-      classes += " node-finish";
-    }
-
     return (
       <div
         id={`node-${row}-${col}`}
-        className={classes}
+        className={getNodeClasses(isStart, isFinish)}
         onMouseDown={() => onMouseDown(row, col)}
         onMouseUp={() => onMouseUp()}
         onMouseEnter={() => onMouseEnter(row, col)}
@@ -36,3 +27,15 @@ export default class Node extends Component {
     );
   }
 }
+
+const getNodeClasses = (isStart, isFinish) => {
+  if (!isStart && !isFinish) {
+    return "node";
+  }
+  if (isStart) {
+    return "node node-start";
+  }
+  if (isFinish) {
+    return "node node-finish";
+  }
+};

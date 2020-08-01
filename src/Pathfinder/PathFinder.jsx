@@ -25,8 +25,7 @@ export default class Pathfinder extends Component {
       grid: [],
       startNode: null,
       finishNode: null,
-      visualizationButtonsEnabled: true,
-      resetButtonEnabled: true,
+      buttonsEnabled: true,
     };
   }
 
@@ -40,15 +39,11 @@ export default class Pathfinder extends Component {
   }
 
   resetBoard() {
-    Promise.resolve().then(() => {
-      this.setState({
-        grid: [],
-        startNode: null,
-        finishNode: null,
-        visualizationButtonsEnabled: true,
-        resetButtonEnabled: true,
-      });
-    });
+    const { animationTimers } = this.state;
+
+    for (let animationTimer of animationTimers) {
+      clearTimeout(animationTimer);
+    }
 
     const grid = getInitialGrid(window.innerWidth, window.innerHeight);
     const startNode = grid[START_NODE_ROW][START_NODE_COL];
@@ -56,21 +51,22 @@ export default class Pathfinder extends Component {
 
     Promise.resolve().then(() => {
       this.setState({
+        grid: [],
+        animationTimers: null,
+      });
+    });
+
+    Promise.resolve().then(() => {
+      this.setState({
         grid,
         startNode,
         finishNode,
+        buttonsEnabled: true,
       });
     });
   }
 
   visualize(selectedAlgorithm) {
-    Promise.resolve().then(() => {
-      this.setState({
-        visualizationButtonsEnabled: false,
-        resetButtonEnabled: false,
-      });
-    });
-
     const { grid, startNode, finishNode } = this.state;
 
     let visitedNodesInOrder;
@@ -82,14 +78,12 @@ export default class Pathfinder extends Component {
 
     const shortestPathInOrder = rebuildShortestPathFromFinishNode(finishNode);
 
-    const afterAnimationAction = () =>
-      this.setState({ resetButtonEnabled: true });
-
-    animateSearch(
+    const animationTimers = animateSearch(
       visitedNodesInOrder,
-      shortestPathInOrder,
-      afterAnimationAction
+      shortestPathInOrder
     );
+
+    this.setState({ buttonsEnabled: false, animationTimers });
   }
 
   handleMouseDown(row, col) {
@@ -138,11 +132,7 @@ export default class Pathfinder extends Component {
   }
 
   render() {
-    const {
-      grid,
-      visualizationButtonsEnabled,
-      resetButtonEnabled,
-    } = this.state;
+    const { grid, buttonsEnabled } = this.state;
 
     return (
       <>
@@ -150,8 +140,7 @@ export default class Pathfinder extends Component {
           bfs={() => this.visualize(BFS)}
           dfs={() => this.visualize(DFS)}
           reset={() => this.resetBoard()}
-          visualizationEnabled={visualizationButtonsEnabled}
-          resetEnabled={resetButtonEnabled}
+          buttonsEnabled={buttonsEnabled}
         ></MenuBar>
 
         <div className="pathfinder-main">

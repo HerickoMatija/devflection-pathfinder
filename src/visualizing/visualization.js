@@ -1,27 +1,31 @@
-export function animateSearch(
-  visitedNodesInOrder,
-  shortestPathInOrder,
-  afterAnimationActions
-) {
+export function animateSearch(visitedNodesInOrder, shortestPathInOrder) {
+  const animationTimers = [];
+
   for (let [index, node] of visitedNodesInOrder.entries()) {
-    setTimeout(() => {
-      addCssClassToNode(node, "node-visited");
-    }, 10 * index);
+    animationTimers.push(
+      setTimeout(() => {
+        addCssClassToNode(node, "node-visited");
+      }, 10 * index)
+    );
   }
 
-  setTimeout(() => {
-    animateShortestPath(shortestPathInOrder, afterAnimationActions);
-  }, 10 * visitedNodesInOrder.length);
+  animationTimers.push(
+    setTimeout(() => {
+      animateShortestPath(shortestPathInOrder, animationTimers);
+    }, 10 * visitedNodesInOrder.length)
+  );
+
+  return animationTimers;
 }
 
-function animateShortestPath(shortestPathInOrder, afterAnimationActions) {
+function animateShortestPath(shortestPathInOrder, animationTimers) {
   for (let [index, node] of shortestPathInOrder.entries()) {
-    setTimeout(() => {
-      addCssClassToNode(node, "node-shortest-path");
-    }, 25 * index);
+    animationTimers.push(
+      setTimeout(() => {
+        addCssClassToNode(node, "node-shortest-path");
+      }, 25 * index)
+    );
   }
-
-  setTimeout(afterAnimationActions, 25 * shortestPathInOrder.length);
 }
 
 function addCssClassToNode(node, cssClass) {
