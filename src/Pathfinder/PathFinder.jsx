@@ -203,13 +203,13 @@ const getInitialGrid = (width, height) => {
   const possibleRows = Math.floor(availableHeight / 25);
   const possibleCols = Math.floor(availableWidth / 25);
 
-  const grid = [];
-
   START_NODE_ROW = Math.floor(Math.random() * possibleRows);
   START_NODE_COL = Math.floor(Math.random() * possibleCols);
 
   FINISH_NODE_ROW = Math.floor(Math.random() * possibleRows);
   FINISH_NODE_COL = Math.floor(Math.random() * possibleCols);
+
+  const grid = [];
 
   for (let row = 0; row < possibleRows; row++) {
     const currentRow = [];
@@ -218,6 +218,7 @@ const getInitialGrid = (width, height) => {
     }
     grid.push(currentRow);
   }
+
   return grid;
 };
 
