@@ -4,11 +4,19 @@ import "./MenuBar.css";
 
 export default class MenuBar extends Component {
   render() {
-    const { bfs, dfs, dijkstra, reset, buttonsEnabled } = this.props;
+    const { astar, bfs, dfs, dijkstra, reset, buttonsEnabled } = this.props;
 
     return (
       <div className="menu-container">
         <div className="menu">
+          <button
+            id="bfs-btn"
+            className="menu-btn"
+            onClick={() => astar()}
+            disabled={!buttonsEnabled}
+          >
+            Visualize A*
+          </button>
           <button
             id="bfs-btn"
             className="menu-btn"

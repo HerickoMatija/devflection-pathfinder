@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 
+import { astar } from "../pathfinding-algorithms/astar";
 import { bfs } from "../pathfinding-algorithms/bfs";
 import { dfs } from "../pathfinding-algorithms/dfs";
 import { dijkstra } from "../pathfinding-algorithms/dijkstra";
@@ -11,6 +12,7 @@ import MenuBar from "../menu-bar/MenuBar";
 
 import "./Pathfinder.css";
 
+const A_STAR = "astar";
 const BFS = "bfs";
 const DFS = "dfs";
 const DIJKSTRA = "dijkstra";
@@ -72,7 +74,9 @@ export default class Pathfinder extends Component {
     const { grid, startNode, finishNode } = this.state;
 
     let visitedNodesInOrder;
-    if (selectedAlgorithm === BFS) {
+    if (selectedAlgorithm === A_STAR) {
+      visitedNodesInOrder = astar(grid, startNode, finishNode);
+    } else if (selectedAlgorithm === BFS) {
       visitedNodesInOrder = bfs(grid, startNode, finishNode);
     } else if (selectedAlgorithm === DFS) {
       visitedNodesInOrder = dfs(grid, startNode, finishNode);
@@ -141,6 +145,7 @@ export default class Pathfinder extends Component {
     return (
       <>
         <MenuBar
+          astar={() => this.visualize(A_STAR)}
           bfs={() => this.visualize(BFS)}
           dfs={() => this.visualize(DFS)}
           dijkstra={() => this.visualize(DIJKSTRA)}
