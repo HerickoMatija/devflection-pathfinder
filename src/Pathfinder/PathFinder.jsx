@@ -45,8 +45,10 @@ export default class Pathfinder extends Component {
   resetBoard() {
     const { animationTimers } = this.state;
 
-    for (let animationTimer of animationTimers) {
-      clearTimeout(animationTimer);
+    if (animationTimers) {
+      for (let animationTimer of animationTimers) {
+        clearTimeout(animationTimer);
+      }
     }
 
     const grid = getInitialGrid(window.innerWidth, window.innerHeight);
@@ -214,6 +216,7 @@ const createNode = (col, row) => {
     col,
     row,
     distance: Infinity,
+    totalDistance: Infinity,
     isStart: row === START_NODE_ROW && col === START_NODE_COL,
     isFinish: row === FINISH_NODE_ROW && col === FINISH_NODE_COL,
     isVisited: false,

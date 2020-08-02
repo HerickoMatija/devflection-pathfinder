@@ -1,15 +1,14 @@
+import { PriorityQueue } from "./priorityQueue";
 import { getUnvisitedNeighbors } from "./common";
 
 export function dijkstra(grid, startNode, finishNode) {
   const visitedNodesInOrder = [];
 
   startNode.distance = 0;
-  const nodes = getAllNodesOnGrid(grid);
+  const priorityQueue = createPriorityQueue(grid);
 
-  while (nodes.length !== 0) {
-    nodes.sort((nodeOne, nodeTwo) => nodeOne.distance - nodeTwo.distance);
-
-    const closestNode = nodes.shift();
+  while (priorityQueue.size() !== 0) {
+    const closestNode = priorityQueue.pop();
 
     if (closestNode.distance === Infinity) {
       return visitedNodesInOrder;
@@ -23,27 +22,32 @@ export function dijkstra(grid, startNode, finishNode) {
       return visitedNodesInOrder;
     }
 
-    updateNeighbourDistances(closestNode, grid);
+    updateNeighbourDistances(priorityQueue, closestNode, grid);
   }
 }
 
-function getAllNodesOnGrid(grid) {
-  const allNodes = [];
+function updateNeighbourDistances(priorityQueue, node, grid) {
+  const unvisitedNeighbors = getUnvisitedNeighbors(node, grid);
+
+  for (const unvisitedNeighbor of unvisitedNeighbors) {
+    priorityQueue.updateOrder(unvisitedNeighbor, node.distance + 1);
+    unvisitedNeighbor.distance = node.distance + 1;
+    unvisitedNeighbor.isVisited = true;
+    unvisitedNeighbor.previousNode = node;
+  }
+}
+
+function createPriorityQueue(grid) {
+  const priorityQueue = new PriorityQueue(getValueFunction, setValueFunction);
 
   for (let row of grid) {
     for (let node of row) {
-      allNodes.push(node);
+      priorityQueue.push(node);
     }
   }
 
-  return allNodes;
+  return priorityQueue;
 }
 
-function updateNeighbourDistances(node, grid) {
-  const unvisitedNeighbors = getUnvisitedNeighbors(node, grid);
-
-  for (const neighbor of unvisitedNeighbors) {
-    neighbor.distance = node.distance + 1;
-    neighbor.previousNode = node;
-  }
-}
+const getValueFunction = (node) => node.distance;
+const setValueFunction = (node, newValue) => (node.distance = newValue);

@@ -1,15 +1,15 @@
+import { PriorityQueue } from "./priorityQueue";
 import { getUnvisitedNeighbors } from "./common";
 
 export function astar(grid, startNode, finishNode) {
   const visitedNodesInOrder = [];
 
   startNode.distance = 0;
-  const nodes = getAllNodesOnGrid(grid);
+  startNode.totalDistance = manhattanDistance(startNode, finishNode);
+  const priorityQueue = createPriorityQueue(grid);
 
-  while (nodes.length !== 0) {
-    nodes.sort((nodeOne, nodeTwo) => nodeOne.distance - nodeTwo.distance);
-
-    const closestNode = nodes.shift();
+  while (priorityQueue.size() !== 0) {
+    const closestNode = priorityQueue.pop();
 
     if (closestNode.distance === Infinity) {
       return visitedNodesInOrder;
@@ -23,29 +23,21 @@ export function astar(grid, startNode, finishNode) {
       return visitedNodesInOrder;
     }
 
-    updateNeighbourDistances(closestNode, grid, finishNode);
+    updateNeighbourDistances(priorityQueue, closestNode, grid, finishNode);
   }
 }
 
-function getAllNodesOnGrid(grid) {
-  const allNodes = [];
-
-  for (let row of grid) {
-    for (let node of row) {
-      allNodes.push(node);
-    }
-  }
-
-  return allNodes;
-}
-
-function updateNeighbourDistances(node, grid, finishNode) {
+function updateNeighbourDistances(priorityQueue, node, grid, finishNode) {
   const unvisitedNeighbors = getUnvisitedNeighbors(node, grid);
 
-  for (const neighbor of unvisitedNeighbors) {
-    const distanceToFinish = manhattanDistance(neighbor, finishNode);
-    neighbor.distance = node.distance + 1 + distanceToFinish;
-    neighbor.previousNode = node;
+  for (const unvisitedNeighbor of unvisitedNeighbors) {
+    const totalDistance =
+      node.distance + 1 + manhattanDistance(unvisitedNeighbor, finishNode);
+
+    priorityQueue.updateOrder(unvisitedNeighbor, totalDistance);
+    unvisitedNeighbor.distance = node.distance + 1;
+    unvisitedNeighbor.totalDistance = totalDistance;
+    unvisitedNeighbor.previousNode = node;
   }
 }
 
@@ -54,3 +46,18 @@ function manhattanDistance(node, finishNode) {
     Math.abs(node.row - finishNode.row) + Math.abs(node.col - finishNode.col)
   );
 }
+
+function createPriorityQueue(grid) {
+  const priorityQueue = new PriorityQueue(getValueFunction, setValueFunction);
+
+  for (let row of grid) {
+    for (let node of row) {
+      priorityQueue.push(node);
+    }
+  }
+
+  return priorityQueue;
+}
+
+const getValueFunction = (node) => node.totalDistance;
+const setValueFunction = (node, newValue) => (node.totalDistance = newValue);
