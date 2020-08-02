@@ -17,10 +17,10 @@ const BFS = "bfs";
 const DFS = "dfs";
 const DIJKSTRA = "dijkstra";
 
-const START_NODE_ROW = 5;
-const START_NODE_COL = 5;
-const FINISH_NODE_ROW = 10;
-const FINISH_NODE_COL = 10;
+let START_NODE_ROW = 0;
+let START_NODE_COL = 0;
+let FINISH_NODE_ROW = 1;
+let FINISH_NODE_COL = 1;
 
 export default class Pathfinder extends Component {
   constructor(props) {
@@ -200,6 +200,12 @@ const getInitialGrid = (width, height) => {
   const possibleCols = Math.floor(availableWidth / 25);
 
   const grid = [];
+
+  START_NODE_ROW = Math.floor(Math.random() * possibleRows);
+  START_NODE_COL = Math.floor(Math.random() * possibleCols);
+
+  FINISH_NODE_ROW = Math.floor(Math.random() * possibleRows);
+  FINISH_NODE_COL = Math.floor(Math.random() * possibleCols);
 
   for (let row = 0; row < possibleRows; row++) {
     const currentRow = [];
