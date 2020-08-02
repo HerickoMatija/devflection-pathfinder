@@ -19,6 +19,10 @@ export function animateSearch(visitedNodesInOrder, shortestPathInOrder) {
 }
 
 function animateShortestPath(shortestPathInOrder, animationTimers) {
+  if (shortestPathInOrder.length === 1) {
+    return;
+  }
+
   for (let [index, node] of shortestPathInOrder.entries()) {
     animationTimers.push(
       setTimeout(() => {

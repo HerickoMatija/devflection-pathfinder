@@ -3,19 +3,31 @@ export function getUnvisitedNeighbors(node, grid) {
   const { col, row } = node;
 
   if (col > 0) {
-    neighbors.push(grid[row][col - 1]);
+    const neighbor = grid[row][col - 1];
+    if (!neighbor.isVisited && !neighbor.isWall) {
+      neighbors.push(neighbor);
+    }
   }
   if (row > 0) {
-    neighbors.push(grid[row - 1][col]);
+    const neighbor = grid[row - 1][col];
+    if (!neighbor.isVisited && !neighbor.isWall) {
+      neighbors.push(neighbor);
+    }
   }
   if (col < grid[0].length - 1) {
-    neighbors.push(grid[row][col + 1]);
+    const neighbor = grid[row][col + 1];
+    if (!neighbor.isVisited && !neighbor.isWall) {
+      neighbors.push(neighbor);
+    }
   }
   if (row < grid.length - 1) {
-    neighbors.push(grid[row + 1][col]);
+    const neighbor = grid[row + 1][col];
+    if (!neighbor.isVisited && !neighbor.isWall) {
+      neighbors.push(neighbor);
+    }
   }
 
-  return neighbors.filter((neighbor) => !neighbor.isVisited);
+  return neighbors;
 }
 
 export function rebuildShortestPathFromFinishNode(finishNode) {

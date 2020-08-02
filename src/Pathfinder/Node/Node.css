@@ -5,6 +5,10 @@
   display: inline-block;
 }
 
+.node-wall {
+  background-color: black;
+}
+
 .node-finish {
   background: url("../../images/finish.svg");
   background-repeat: no-repeat;

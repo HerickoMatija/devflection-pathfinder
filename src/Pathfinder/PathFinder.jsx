@@ -58,7 +58,6 @@ export default class Pathfinder extends Component {
     Promise.resolve().then(() => {
       this.setState({
         grid: [],
-        animationTimers: null,
       });
     });
 
@@ -67,6 +66,7 @@ export default class Pathfinder extends Component {
         grid,
         startNode,
         finishNode,
+        animationTimers: null,
         buttonsEnabled: true,
       });
     });
@@ -99,14 +99,13 @@ export default class Pathfinder extends Component {
   handleMouseDown(row, col) {
     const node = this.state.grid[row][col];
 
-    if (!node.isStart && !node.isFinish) {
-      return;
-    }
-
     if (node.isStart) {
       this.setState({ mouseIsPressed: true, movingNode: "start" });
-    } else {
+    } else if (node.isFinish) {
       this.setState({ mouseIsPressed: true, movingNode: "finish" });
+    } else {
+      const newGrid = getGridWithCellWallToggled(this.state.grid, row, col);
+      this.setState({ grid: newGrid, mouseIsPressed: true });
     }
   }
 
@@ -118,9 +117,12 @@ export default class Pathfinder extends Component {
     if (this.state.movingNode === "start") {
       node.isStart = true;
       this.setState({ startNode: node });
-    } else {
+    } else if (this.state.movingNode === "finish") {
       node.isFinish = true;
       this.setState({ finishNode: node });
+    } else {
+      const newGrid = getGridWithCellWallToggled(this.state.grid, row, col);
+      this.setState({ grid: newGrid });
     }
   }
 
@@ -135,9 +137,10 @@ export default class Pathfinder extends Component {
 
     if (this.state.movingNode === "start") {
       node.isStart = false;
-    }
-    if (this.state.movingNode === "finish") {
+      this.setState({ startNode: node });
+    } else if (this.state.movingNode === "finish") {
       node.isFinish = false;
+      this.setState({ finishNode: node });
     }
   }
 
@@ -161,7 +164,7 @@ export default class Pathfinder extends Component {
               return (
                 <div key={rowIdx}>
                   {row.map((node, nodeIdx) => {
-                    const { row, col, isStart, isFinish } = node;
+                    const { row, col, isStart, isFinish, isWall } = node;
                     return (
                       <Node
                         key={nodeIdx}
@@ -169,6 +172,7 @@ export default class Pathfinder extends Component {
                         row={row}
                         isStart={isStart}
                         isFinish={isFinish}
+                        isWall={isWall}
                         onMouseDown={(row, col) =>
                           this.handleMouseDown(row, col)
                         }
@@ -225,7 +229,19 @@ const createNode = (col, row) => {
     totalDistance: Infinity,
     isStart: row === START_NODE_ROW && col === START_NODE_COL,
     isFinish: row === FINISH_NODE_ROW && col === FINISH_NODE_COL,
+    isWall: false,
     isVisited: false,
     previousNode: null,
   };
+};
+
+const getGridWithCellWallToggled = (grid, row, col) => {
+  const newGrid = grid.slice();
+  const node = newGrid[row][col];
+  const newNode = {
+    ...node,
+    isWall: !node.isWall,
+  };
+  newGrid[row][col] = newNode;
+  return newGrid;
 };
