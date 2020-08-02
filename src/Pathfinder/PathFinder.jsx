@@ -6,7 +6,7 @@ import { dijkstra } from "../pathfinding-algorithms/dijkstra";
 import { rebuildShortestPathFromFinishNode } from "../pathfinding-algorithms/common";
 import { animateSearch } from "../visualizing/visualization";
 
-import Node from "./Node/Node";
+import Node from "./node/Node";
 import MenuBar from "../menu-bar/MenuBar";
 
 import "./Pathfinder.css";

@@ -1,6 +1,6 @@
 import React from "react";
 import "./App.css";
-import Pathfinder from "./Pathfinder/PathFinder";
+import Pathfinder from "./pathfinder/PathFinder";
 
 function App() {
   return <Pathfinder></Pathfinder>;
