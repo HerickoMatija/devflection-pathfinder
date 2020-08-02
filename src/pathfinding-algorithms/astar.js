@@ -4,14 +4,13 @@ import { getUnvisitedNeighbors } from "./common";
 export function astar(grid, startNode, finishNode) {
   const visitedNodesInOrder = [];
 
-  startNode.distance = 0;
-  startNode.totalDistance = manhattanDistance(startNode, finishNode);
+  startNode.totalDistance = 0;
   const priorityQueue = createPriorityQueue(grid);
 
   while (priorityQueue.size() !== 0) {
     const closestNode = priorityQueue.pop();
 
-    if (closestNode.distance === Infinity) {
+    if (closestNode.totalDistance === Infinity) {
       return visitedNodesInOrder;
     }
 
@@ -31,11 +30,9 @@ function updateNeighbourDistances(priorityQueue, node, grid, finishNode) {
   const unvisitedNeighbors = getUnvisitedNeighbors(node, grid);
 
   for (const unvisitedNeighbor of unvisitedNeighbors) {
-    const totalDistance =
-      node.distance + 1 + manhattanDistance(unvisitedNeighbor, finishNode);
+    const totalDistance = manhattanDistance(unvisitedNeighbor, finishNode);
 
     priorityQueue.updateOrder(unvisitedNeighbor, totalDistance);
-    unvisitedNeighbor.distance = node.distance + 1;
     unvisitedNeighbor.totalDistance = totalDistance;
     unvisitedNeighbor.previousNode = node;
   }
