@@ -70,6 +70,11 @@ export class PriorityQueue {
 
   updateOrder(node, newDistance) {
     let currentIdx = this._map.get(mapNodeKey(node));
+
+    if (this._heap[currentIdx].distance < newDistance) {
+        return
+    }
+
     this.setValueFunction(this._heap[currentIdx], newDistance);
     for (let idx = this._heap.length - 1; idx > 0; idx--) {
       this.siftUp(currentIdx);

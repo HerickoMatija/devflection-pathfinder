@@ -30,8 +30,10 @@ function updateNeighbourDistances(priorityQueue, node, grid) {
   const unvisitedNeighbors = getUnvisitedNeighbors(node, grid);
 
   for (const unvisitedNeighbor of unvisitedNeighbors) {
-    priorityQueue.updateOrder(unvisitedNeighbor, node.distance + 1);
-    unvisitedNeighbor.distance = node.distance + 1;
+    let weight = getNeighbourWeight(node, unvisitedNeighbor)
+
+    priorityQueue.updateOrder(unvisitedNeighbor, node.distance + weight);
+    unvisitedNeighbor.distance = node.distance + weight;
     unvisitedNeighbor.isVisited = true;
     unvisitedNeighbor.previousNode = node;
   }
@@ -47,6 +49,18 @@ function createPriorityQueue(grid) {
   }
 
   return priorityQueue;
+}
+
+function getNeighbourWeight(node, neighbour) {
+    if (node.row === neighbour.row) {
+        return 5;
+    }    
+    if (node.row < neighbour.row) {
+        return 1;
+    }
+    if (node.row > neighbour.row) {
+        return 10;
+    }
 }
 
 const getValueFunction = (node) => node.distance;
