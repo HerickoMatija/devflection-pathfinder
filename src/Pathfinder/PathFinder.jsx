@@ -127,7 +127,7 @@ export default class Pathfinder extends Component {
   }
 
   handleMouseUp() {
-    this.setState({ mouseIsPressed: false });
+    this.setState({ mouseIsPressed: false, movingNode: "" });
   }
 
   handleMouseLeave(row, col) {
